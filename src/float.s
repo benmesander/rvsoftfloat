@@ -1,4 +1,4 @@
-### Single precision
+### IEEE754 Single precision
 
 .equ SP_MANTISSA_BITS, 23
 .equ SP_EXPONENT_BITS, 8
@@ -11,10 +11,20 @@
 .equ SP_INF, 0x7F800000
 .equ SP_MINUS_INF, 0xFF800000
 
-### Double precision
+### IEEE754 Double precision
 
-### Half precision
+.equ DP_MANTISSA_BITS, 52
+.equ DP_EXPONENT_BITS, 11
+.equ DP_EXPONENT_BIAS, 1023
+
+### IEEE754 Half precision
+
+.equ HP_MANTISSA_BITS, 10
+.equ HP_EXPONENT_BITS, 5	
+.equ HP_EXPONENT_BIAS, 15
 	
 ### Bfloat16
 
-	
+.equ BF16_MANTISSA_BITS, 7
+.equ BF16_EXPONENT_BITS, 8
+.equ BF16_EXPONENT_BIAS, 127
