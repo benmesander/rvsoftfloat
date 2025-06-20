@@ -22,7 +22,7 @@ EXES	:= tests.x
 %.o: %.s
 	$(CC) $(CFLAGS) -c $< -o $@
 
-atof.o: atof.s
+atof.o: atof.s float.s
 
 tests.x: $(OBJS)
 	$(LD) $(LDFLAGS) $^ -o $@
