@@ -22,6 +22,41 @@ _start:
 	li	a3, SP_MINUS_ZERO
 	jal	atof_test
 
+	li	a0, 3
+	la	a1, nanstr
+	li	a2, 3
+	li	a3, SP_QNAN
+	jal	atof_test
+
+	li	a0, 4
+	la	a1, qnanstr
+	li	a2, 4
+	li	a3, SP_QNAN
+	jal	atof_test
+
+	li	a0, 5
+	la	a1, snanstr
+	li	a2, 4
+	li	a3, SP_SNAN
+	jal	atof_test
+
+	li	a0, 6
+	la	a1, infstr
+	li	a2, 3
+	li	a3, SP_INF
+	jal	atof_test
+
+	li	a0, 7
+	la	a1, minfstr
+	li	a2, 4
+	li	a3, SP_MINUS_INF
+	jal	atof_test
+
+	li	a0, 8
+	la	a1, notfoundstr
+	li	a2, 4
+	li	a3, 0xDEADBEEF	# Expected to fail - not in table
+	jal	atof_test
 
 	j	_end
 
@@ -74,7 +109,7 @@ atof_test:
 	bnez	a0, atof_test_fail
 
 
-	mv	a0, a1
+	mv	a0, t0
 	li	a1, 4
 	li	a2, 1
 	jal	to_hex
@@ -101,11 +136,19 @@ atof_test_return:
 	ret
 
 atof_test_fail:
-	# XXX: print return code and return value
-	la	a1, fail
+	# Print "fail: expected X got Y"
+	la	a1, fail_prefix
 	li	a2, 5
 	jal	print
-	j 	atof_test_return
+	mv	a0, s3		# Print expected value
+	li	a1, 4
+	li	a2, 1
+	jal	to_hex
+	# After printing the error details
+	la	a1, newline
+	li	a2, 1
+	jal	print
+	j	atof_test_return
 
 # a1 - ptr to string to print
 # a2 - # bytes to print
@@ -129,3 +172,11 @@ equal:	.ascii	"="		# 1
 zerostr:.ascii	"0"		# 1
 zero2:	.ascii	"0.0"		# 3
 mzero:	.ascii "-0"		# 2
+nanstr:	.ascii	"NaN"		# 3
+qnanstr:.ascii	"qNaN"		# 4
+snanstr:.ascii	"sNaN"		# 4
+infstr:	.ascii	"Inf"		# 3
+minfstr:.ascii	"-Inf"		# 4
+notfoundstr: .ascii "test"	# 4
+fail_prefix: .ascii "fail: expected " # 11
+newline: .ascii "\n"		# 1
