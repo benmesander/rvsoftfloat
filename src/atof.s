@@ -25,6 +25,7 @@ lit_inf:
 lit_minus_inf:
 .ascii "-Inf"
 
+# macro to define a pointer address (4 or 8 bytes)
 .macro ADDR address
 .if CPU_BITS == 64
 .long \address
@@ -33,6 +34,7 @@ lit_minus_inf:
 .endif
 .endm
 
+# lookup table struct layout for 32 and 64 bit machines
 .equ float_lookup.len,		0	
 .equ float_lookup.strptr, 	4
 .if CPU_BITS == 64
@@ -43,7 +45,7 @@ lit_minus_inf:
 .equ sizeof_float_lookup,	12
 .endif	
 
-# special float values, done with lookup table
+# special float values lookup table
 float_lookup_table:
 ################################
 # "0"	
@@ -94,10 +96,13 @@ ADDR lit_minus_inf
 .globl	atof
 .text
 
-# a0 ptr to str1
-# a1 strlen(a0)
-# a2 ptr to str2
-# a3 strlen(a2)
+# compare two strings
+# in:
+# a0 = ptr to str1
+# a1 = strlen(a0)
+# a2 = ptr to str2
+# a3 = strlen(a2)
+# out:
 # a0 = 0 eq else neq
 
 strncmp:
@@ -112,15 +117,17 @@ strncmp_loop:
 	bnez	a1, strncmp_loop
 	li	a0, 0
 	ret
-
 strncmp_ne:
 	li	a0, 1
 	ret
 
-# a0 ptr to buf
-# a1 strlen(a0)	
-# a0 - notfound = 0, found = nonzero
-# a1 - float value	
+# find an entry in the special value lookup table
+# in:
+# a0 = ptr to string
+# a1 = strlen(a0)	
+# out:
+# a0 = notfound = 0, found = nonzero
+# a1 = float value	
 find:
 	FRAME	4
 	PUSH	ra, 0
@@ -134,7 +141,7 @@ find:
 
 find_loop:
 	lw	a3, float_lookup.len(s2)
-	beqz	a3, find_return
+	beqz	a3, find_return_notfound
 .if CPU_BITS == 32
 	lw	a2, float_lookup.strptr(s2)
 .else
@@ -146,15 +153,14 @@ find_loop:
 	beqz	a0, find_next
 	lw	a1, float_lookup.val(s2)
 	li	a0, 1
-	ret
+	j	find_return
 find_next:
 	addi	s2, s2, sizeof_float_lookup
 	j	find_loop
 
-find_return:
+find_return_notfound:
 	li	a0, 0
-	ret
-
+find_return:	
 	EFRAME	4
 	POP	ra, 0
 	POP	s0, 1
