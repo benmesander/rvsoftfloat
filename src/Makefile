@@ -12,7 +12,7 @@ RVINT	:= ../../rvint
 CC	:= clang
 LD	:= ld.lld
 CFLAGS	:= --target=$(TARGET) -march=$(ARCH) -mabi=$(ABI) -I$(RVINT)/src
-LDFLAGS	:=
+LDFLAGS	:= -L$(RVINT)/src -lrvint
 
 SRCS	:= atof.s testf.s
 OBJS	:= $(SRCS:.s=.o)
