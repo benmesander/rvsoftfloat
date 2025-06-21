@@ -13,18 +13,20 @@ LD	:= ld.lld
 CFLAGS	:= --target=$(TARGET) -march=$(ARCH) -mabi=$(ABI)
 LDFLAGS	:=
 
-SRCS	:= atof.s
+SRCS	:= atof.s testf.s
 OBJS	:= $(SRCS:.s=.o)
-EXES	:= tests.x
+EXES	:= testf.x
 
 .PHONY: all clean
+
+all: $(EXES)
 
 %.o: %.s
 	$(CC) $(CFLAGS) -c $< -o $@
 
 atof.o: atof.s float.s
 
-tests.x: $(OBJS)
+testf.x: $(OBJS)
 	$(LD) $(LDFLAGS) $^ -o $@
 
 clean:

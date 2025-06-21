@@ -90,11 +90,8 @@ ADDR lit_minus_inf
 ################################
 .word 0 # terminator
 	
-
-
-
-.globl	atof
 .text
+.globl	atof
 
 # compare two strings
 # in:
