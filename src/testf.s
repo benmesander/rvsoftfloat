@@ -19,7 +19,8 @@ _start:
 	li	a0, 2
 	la	a1, mzero
 	li	a2, 2
-	li	a3, SP_MINUS_ZERO
+	lui	a3, %hi(SP_MINUS_ZERO)
+	addi	a3, a3, %lo(SP_MINUS_ZERO)
 	jal	atof_test
 
 	li	a0, 3
@@ -49,7 +50,8 @@ _start:
 	li	a0, 7
 	la	a1, minfstr
 	li	a2, 4
-	li	a3, SP_MINUS_INF
+	lui	a3, %hi(SP_MINUS_INF)
+	addi	a3, a3, %lo(SP_MINUS_INF)
 	jal	atof_test
 
 	li	a0, 8
