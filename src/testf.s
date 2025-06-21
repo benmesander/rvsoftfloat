@@ -6,7 +6,7 @@
 _start:
 	li	a0, 0
 	la	a1, zerostr
-	li	a2, 0
+	li	a2, 1
 	li	a3, 0
 	jal	atof_test
 	
@@ -42,7 +42,6 @@ atof_test:
 	li	a2, 1
 	jal	print
 
-	# xxx: things go south here
 	mv	a1, s1		# string value a1 ptr
 	mv	a2, s2
 	jal	print
