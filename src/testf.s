@@ -7,13 +7,19 @@ _start:
 	li	a0, 0
 	la	a1, zerostr
 	li	a2, 1
-	li	a3, 0
+	li	a3, SP_ZERO
 	jal	atof_test
 	
 	li	a0, 1
 	la	a1, zero2
 	li	a2, 3
-	li	a3, 0
+	li	a3, SP_ZERO
+	jal	atof_test
+
+	li	a0, 2
+	la	a1, mzero
+	li	a2, 2
+	li	a3, SP_MINUS_ZERO
 	jal	atof_test
 
 
@@ -60,10 +66,13 @@ atof_test:
 	mv	a0, s1
 	mv	a1, s2
 	jal	atof
-	bnez	a1, atof_test_fail
 
-	sub	a0, a1, s3
+	mv	t0, a0
+	li	t1, STATUS_SUCCESS
+	bne	a1, t1, atof_test_fail
+	sub	a0, t0, s3
 	bnez	a0, atof_test_fail
+
 
 	mv	a0, a1
 	li	a1, 4
@@ -112,10 +121,11 @@ _end:
         ecall
 
 .rodata
-test:	.asciz	"test "		# 5
-pass:	.asciz	"pass\n"	# 5
-fail:	.asciz	"fail\n"	# 5
-space:	.asciz	" "		# 1
-equal:	.asciz	"="		# 1
-zerostr:.asciz	"0"		# 1
-zero2:	.asciz	"0.0"		# 3
+test:	.ascii	"test "		# 5
+pass:	.ascii	"pass\n"	# 5
+fail:	.ascii	"fail\n"	# 5
+space:	.ascii	" "		# 1
+equal:	.ascii	"="		# 1
+zerostr:.ascii	"0"		# 1
+zero2:	.ascii	"0.0"		# 3
+mzero:	.ascii "-0"		# 2
