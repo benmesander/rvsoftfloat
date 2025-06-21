@@ -124,7 +124,7 @@ find_loop:
 	mv	a0, s0
 	mv	a1, s1
 	jal	strncmp
-	beqz	a0, find_next
+	bnez	a0, find_next
 	lw	a1, float_lookup.val(s2)
 	li	a0, 1
 	j	find_return
