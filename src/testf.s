@@ -32,6 +32,7 @@ atof_test:
 	li	a2, 5
 	jal	print
 
+	mv	a0, s0
 	jal	to_decu		# number in a0
 	mv	a2, a1
 	mv	a1, a0
@@ -41,6 +42,7 @@ atof_test:
 	li	a2, 1
 	jal	print
 
+	# xxx: things go south here
 	mv	a1, s1		# string value a1 ptr
 	mv	a2, s2
 	jal	print
