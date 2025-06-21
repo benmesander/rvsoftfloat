@@ -4,6 +4,12 @@
 .text
 .globl _start
 _start:
+	li	a0, 0
+	la	a1, zerostr
+	li	a2, 0
+	li	a3, 0
+	jal	atof_test
+	
 	j	_end
 
 # a0 = test #
@@ -102,3 +108,4 @@ test:	.asciz	"test "		# 5
 pass:	.asciz	"pass\n"	# 5
 fail:	.asciz	"fail\n"	# 5
 space:	.asciz	" "		# 1
+zerostr:.asciz	"0"		# 1
