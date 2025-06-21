@@ -10,6 +10,13 @@ _start:
 	li	a3, 0
 	jal	atof_test
 	
+	li	a0, 1
+	la	a1, zero2
+	li	a2, 3
+	li	a3, 0
+	jal	atof_test
+
+
 	j	_end
 
 # a0 = test #
@@ -53,7 +60,7 @@ atof_test:
 	mv	a0, s1
 	mv	a1, s2
 	jal	atof
-	bnez	a0, atof_test_fail	# xxx: failing here
+	bnez	a1, atof_test_fail	# xxx: failing here
 
 	sub	a0, a1, s3
 	bnez	a0, atof_test_fail
@@ -65,7 +72,7 @@ atof_test:
 
 	mv	a2, a1		# result
 	mv	a1, a0
-	call	print
+	jal	print
 
 	la	a1, space	# " "
 	li	a2, 1
@@ -110,3 +117,4 @@ pass:	.asciz	"pass\n"	# 5
 fail:	.asciz	"fail\n"	# 5
 space:	.asciz	" "		# 1
 zerostr:.asciz	"0"		# 1
+zero2:	.asciz	"0.0"		# 3
