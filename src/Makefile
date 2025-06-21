@@ -8,9 +8,10 @@ TARGET	?=riscv32
 ARCH	?=rv32gc
 ABI	?=ilp32d
 
+RVINT	:= ../../rvint
 CC	:= clang
 LD	:= ld.lld
-CFLAGS	:= --target=$(TARGET) -march=$(ARCH) -mabi=$(ABI)
+CFLAGS	:= --target=$(TARGET) -march=$(ARCH) -mabi=$(ABI) -I$(RVINT)/src
 LDFLAGS	:=
 
 SRCS	:= atof.s testf.s

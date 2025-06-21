@@ -1,4 +1,4 @@
-.include "../../rvint/src/config.s" # XXX
+.include "config.s"
 .include "float.s"
 
 .text
