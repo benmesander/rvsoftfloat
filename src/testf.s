@@ -42,7 +42,7 @@ atof_test:
 	li	a2, 1
 	jal	print
 
-	mv	a1, s1		# string value a1 ptr
+	mv	a1, s1		# string value a1 ptr, a2 len
 	mv	a2, s2
 	jal	print
 
@@ -53,7 +53,7 @@ atof_test:
 	mv	a0, s1
 	mv	a1, s2
 	jal	atof
-	bnez	a0, atof_test_fail
+	bnez	a0, atof_test_fail	# xxx: failing here
 
 	sub	a0, a1, s3
 	bnez	a0, atof_test_fail

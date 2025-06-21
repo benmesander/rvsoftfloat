@@ -20,67 +20,53 @@ lit_inf:
 lit_minus_inf:
 .ascii "-Inf"
 
-# macro to define a pointer address (4 or 8 bytes)
-.macro ADDR address
-.if CPU_BITS == 64
-.long \address
-.else	
-.word \address
-.endif
-.endm
-
 # lookup table struct layout for 32 and 64 bit machines
 .equ float_lookup.len,		0	
 .equ float_lookup.strptr, 	4
-.if CPU_BITS == 64
-.equ float_lookup.val, 		12
-.equ sizeof_float_lookup,	16
-.else
 .equ float_lookup.val,		8
 .equ sizeof_float_lookup,	12
-.endif	
 
 # special float values lookup table
 float_lookup_table:
 ################################
 # "0"	
 .word 1
-ADDR lit_zero
+.word lit_zero
 .word SP_ZERO
 ################################
 # "0.0"
 .word 3
-ADDR lit_zero2	
+.word lit_zero2	
 .word SP_ZERO
 ################################
 # "-0"
 .word 2
-ADDR lit_minus_zero
+.word lit_minus_zero
 .word SP_MINUS_ZERO
 ################################
 # "NaN"
 .word 3
-ADDR lit_nan
+.word lit_nan
 .word SP_QNAN	
 ################################
 # "qNaN"
 .word 4
-ADDR lit_qnan	
+.word lit_qnan	
 .word SP_QNAN
 ################################
 # "sNaN"
 .word 4
-ADDR lit_snan
+.word lit_snan
 .word SP_SNAN
 ################################
 # "Inf"
 .word 3	
-ADDR lit_inf
+.word lit_inf
 .word SP_INF
 ################################
 # "-Inf"
 .word 4
-ADDR lit_minus_inf
+.word lit_minus_inf
 .word SP_MINUS_INF
 ################################
 .word 0 # terminator
@@ -134,11 +120,7 @@ find:
 find_loop:
 	lw	a3, float_lookup.len(s2)
 	beqz	a3, find_return_notfound
-.if CPU_BITS == 32
 	lw	a2, float_lookup.strptr(s2)
-.else
-	ld	a2, float_lookup.strptr(s2)
-.endif
 	mv	a0, s0
 	mv	a1, s1
 	jal	strncmp
@@ -182,7 +164,7 @@ atof_search_table:
 	mv	s0, a0
 	mv	s1, a1
 	jal	find
-	bnez	a0, atof_table_notfound
+	beqz	a0, atof_table_notfound
 	mv	a0, a1
 	li	a1, STATUS_SUCCESS
 	j	atof_return
