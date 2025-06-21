@@ -1,3 +1,10 @@
+### return values from conversion routines
+
+.equ STATUS_SUCCESS, 0
+.equ STATUS_TOO_SHORT, 1
+.equ STATUS_TOO_LONG, 2
+.equ STATUS_MALFORMED, 3	
+
 ### IEEE754 Single precision
 
 .equ SP_MANTISSA_BITS, 23

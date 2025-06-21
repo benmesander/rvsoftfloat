@@ -1,11 +1,6 @@
 .include "config.s"
 .include "float.s"
 
-.equ STATUS_SUCCESS, 0
-.equ STATUS_TOO_SHORT, 1
-.equ STATUS_TOO_LONG, 2
-.equ STATUS_MALFORMED, 3	
-
 .rodata
 
 lit_zero:
