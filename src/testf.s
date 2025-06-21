@@ -53,14 +53,14 @@ atof_test:
 	mv	a2, s2
 	jal	print
 
-	la	a1, space	# " "
+	la	a1, equal	# "="
 	li	a2, 1
 	jal	print
 	
 	mv	a0, s1
 	mv	a1, s2
 	jal	atof
-	bnez	a1, atof_test_fail	# xxx: failing here
+	bnez	a1, atof_test_fail
 
 	sub	a0, a1, s3
 	bnez	a0, atof_test_fail
@@ -83,12 +83,12 @@ atof_test:
 	jal	print
 
 atof_test_return:
-	EFRAME	5
 	POP	ra, 0
 	POP	s0, 1
 	POP	s1, 2
 	POP	s2, 3
 	POP	s3, 4
+	EFRAME	5
 	ret
 
 atof_test_fail:
@@ -116,5 +116,6 @@ test:	.asciz	"test "		# 5
 pass:	.asciz	"pass\n"	# 5
 fail:	.asciz	"fail\n"	# 5
 space:	.asciz	" "		# 1
+equal:	.asciz	"="		# 1
 zerostr:.asciz	"0"		# 1
 zero2:	.asciz	"0.0"		# 3

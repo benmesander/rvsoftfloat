@@ -135,11 +135,11 @@ find_next:
 find_return_notfound:
 	li	a0, 0
 find_return:	
-	EFRAME	4
 	POP	ra, 0
 	POP	s0, 1
 	POP	s1, 2
 	POP	s2, 3
+	EFRAME	4
 	ret
 
 # in:
@@ -172,9 +172,9 @@ atof_table_notfound:
 
 	# XXX: impl
 atof_return:
-	EFRAME	3
 	POP	ra, 0
 	POP	s0, 1
 	POP	s1, 2
+	EFRAME	3
 	ret
 
