@@ -22,7 +22,7 @@ lit_snan:
 .ascii "sNaN"
 lit_inf:
 .ascii "Inf"
-list_minus_inf:
+lit_minus_inf:
 .ascii "-Inf"
 
 .macro ADDR address
@@ -33,26 +33,58 @@ list_minus_inf:
 .endif
 .endm
 
-.macro LWU register, offset, base
+.equ float_lookup.len,		0	
+.equ float_lookup.strptr, 	4
 .if CPU_BITS == 64
-	lwu	\register, \offset(\base)
+.equ float_lookup.val, 		12
+.equ sizeof_float_lookup,	16
 .else
-	lw	\register, \offset(\base)
-.endif
-.endm	
+.equ float_lookup.val,		8
+.equ sizeof_float_lookup,	12
+.endif	
 
+# special float values, done with lookup table
 float_lookup_table:
-.equ LEN_OFFSET, .-float_lookup_table
+################################
+# "0"	
 .word 1
-.equ STRPTR_OFFSET, .-float_lookup_table
 ADDR lit_zero
-.equ VAL_OFFSET, .-float_lookup_table
 .word SP_ZERO
 ################################
-.equ SIZEOF_FLOAT_LOOKUP, .-float_lookup_table
+# "0.0"
+.word 3
+ADDR lit_zero2	
+.word SP_ZERO
+################################
+# "-0"
 .word 2
 ADDR lit_minus_zero
 .word SP_MINUS_ZERO
+################################
+# "NaN"
+.word 3
+ADDR lit_nan
+.word SP_QNAN	
+################################
+# "qNaN"
+.word 4
+ADDR lit_qnan	
+.word SP_QNAN
+################################
+# "sNaN"
+.word 4
+ADDR lit_snan
+.word SP_SNAN
+################################
+# "Inf"
+.word 3	
+ADDR lit_inf
+.word SP_INF
+################################
+# "-Inf"
+.word 4
+ADDR lit_minus_inf
+.word SP_MINUS_INF
 ################################
 .word 0 # terminator
 	
@@ -85,9 +117,6 @@ strncmp_ne:
 	li	a0, 1
 	ret
 
-
-
-
 # a0 ptr to buf
 # a1 strlen(a0)	
 # a0 - notfound = 0, found = nonzero
@@ -104,18 +133,22 @@ find:
 	la	s2, float_lookup_table
 
 find_loop:
-	LWU	a3, LEN_OFFSET, s2
+	lw	a3, float_lookup.len(s2)
 	beqz	a3, find_return
-	la	a2, STRPTR_OFFSET(s2)
+.if CPU_BITS == 32
+	lw	a2, float_lookup.strptr(s2)
+.else
+	ld	a2, float_lookup.strptr(s2)
+.endif
 	mv	a0, s0
 	mv	a1, s1
 	jal	strncmp
 	beqz	a0, find_next
-	LWU	a1, VAL_OFFSET, s2
+	lw	a1, float_lookup.val(s2)
 	li	a0, 1
 	ret
 find_next:
-	addi	s2, s2, SIZEOF_FLOAT_LOOKUP
+	addi	s2, s2, sizeof_float_lookup
 	j	find_loop
 
 find_return:
@@ -137,40 +170,31 @@ find_return:
 # a1 = status
 
 atof:
-	bnez	a1, .atof_1
+	FRAME	3
+	PUSH	ra, 0
+	PUSH	s0, 1
+	PUSH	s1, 2
+
+	bnez	a1, atof_search_table
 	li	a0, 0
 	li	a1, STATUS_TOO_SHORT
-	ret
+	j	atof_return
 
-# handle 0
-.atof_1:
-	li	a2, 1
-	bne	a1, a2, .atof_2
-	lbu	a2, 0(a0)
-	addi	a2, a2, -'0'
-	bnez	a2, .atof_2
-	mv	a0, a2		# float 0 is integer 0x0
+atof_search_table:
+	mv	s0, a0
+	mv	s1, a1
+	jal	find
+	bnez	a0, atof_table_notfound
+	mv	a0, a1
 	li	a1, STATUS_SUCCESS
+	j	atof_return
+atof_table_notfound:	
+
+	# XXX: impl
+atof_return:
+	EFRAME	3
+	POP	ra, 0
+	POP	s0, 1
+	POP	s1, 2
 	ret
 
-# handle NaN, +/-Inf
-.atof_2:
-	if a1 != 3, then .atof_3
-	
-
-
-
-
-	lw	a3, 0(a0)
-	slli	a3, a3, 16
-
-
-
-
-
-
-
-
-
-	li	a1, STATUS_SUCCESS
-	ret
