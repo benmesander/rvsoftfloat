@@ -19,8 +19,9 @@ _start:
 	li	a0, 2
 	la	a1, mzero
 	li	a2, 2
-	lui	a3, %hi(SP_MINUS_ZERO)
-	addi	a3, a3, %lo(SP_MINUS_ZERO)
+	li	a3, SP_MINUS_ZERO
+#	lui	a3, %hi(SP_MINUS_ZERO)		# this sign extends
+#	addi	a3, a3, %lo(SP_MINUS_ZERO)	# wtf
 	jal	atof_test
 
 	li	a0, 3

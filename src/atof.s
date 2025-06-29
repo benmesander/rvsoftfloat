@@ -27,6 +27,7 @@ lit_minus_inf:
 .equ sizeof_float_lookup,	12
 
 # special float values lookup table
+# the entries are arranged shortest to longest
 float_lookup_table:
 ################################
 # "0"	
@@ -34,20 +35,25 @@ float_lookup_table:
 .word lit_zero
 .word SP_ZERO
 ################################
-# "0.0"
-.word 3
-.word lit_zero2	
-.word SP_ZERO
-################################
 # "-0"
 .word 2
 .word lit_minus_zero
 .word SP_MINUS_ZERO
 ################################
+# "0.0"
+.word 3
+.word lit_zero2	
+.word SP_ZERO
+################################
 # "NaN"
 .word 3
 .word lit_nan
 .word SP_QNAN	
+################################
+# "Inf"
+.word 3	
+.word lit_inf
+.word SP_INF
 ################################
 # "qNaN"
 .word 4
@@ -59,17 +65,14 @@ float_lookup_table:
 .word lit_snan
 .word SP_SNAN
 ################################
-# "Inf"
-.word 3	
-.word lit_inf
-.word SP_INF
-################################
 # "-Inf"
 .word 4
 .word lit_minus_inf
 .word SP_MINUS_INF
 ################################
 .word 0 # terminator
+# the length of the longest string in the table above
+.equ MAX_TABLE_LEN_STR, 4
 	
 .text
 .globl	atof
@@ -119,7 +122,8 @@ find:
 
 find_loop:
 	lw	a3, float_lookup.len(s2)
-	beqz	a3, find_return_notfound
+	beqz	a3, find_return_notfound	# end of table
+	bgt	a3, s1, find_return_notfound	# not in table
 	lw	a2, float_lookup.strptr(s2)
 	mv	a0, s0
 	mv	a1, s1
@@ -161,6 +165,8 @@ atof:
 	j	atof_return
 
 atof_search_table:
+	li	a3, MAX_TABLE_LEN_STR
+	bgt	a1, a3, atof_table_notfound
 	mv	s0, a0
 	mv	s1, a1
 	jal	find
