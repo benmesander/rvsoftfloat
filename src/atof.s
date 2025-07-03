@@ -119,6 +119,11 @@ find:
 	mv	s0, a0
 	mv	s1, a1
 	la	s2, float_lookup_table
+	add	a1, a1, -1
+	slli	a0, a1, 1			# mul by 12
+	add	a0, a0, a1
+	slli	a1, a0, 2
+	add	s2, s2, a1			# shorten linear search by a1 struct elements.
 
 find_loop:
 	lw	a3, float_lookup.len(s2)
@@ -129,7 +134,7 @@ find_loop:
 	mv	a1, s1
 	jal	strncmp
 	bnez	a0, find_next
-	lw	a1, float_lookup.val(s2)
+	lwu	a1, float_lookup.val(s2)
 	li	a0, 1
 	j	find_return
 find_next:
