@@ -105,7 +105,7 @@ strncmp_ne:
 # find an entry in the special value lookup table
 # in:
 # a0 = ptr to string
-# a1 = strlen(a0)	
+# a1 = strlen(a0), strictly >= 1.
 # out:
 # a0 = notfound = 0, found = nonzero
 # a1 = float value	
@@ -118,13 +118,13 @@ find:
 
 	mv	s0, a0
 	mv	s1, a1
-	la	s2, float_lookup_table
-	add	a1, a1, -1
-	slli	a0, a1, 1			# mul by 12
+	la	s2, float_lookup_table - sizeof_float_lookup
+	slli	a0, a1, 1			# mul by 12 (sizeof_float_lookup)
 	add	a0, a0, a1
 	slli	a1, a0, 2
-	add	s2, s2, a1			# shorten linear search by a1 struct elements.
-
+	add	s2, s2, a1			# shorten linear search by a1 struct elements - 1.
+						# as a1 is one-based, start from array sizeof(struct) - 1 +
+						# (strlen(a0) * sizeof(struct) to skip over shorter elts.
 find_loop:
 	lw	a3, float_lookup.len(s2)
 	beqz	a3, find_return_notfound	# end of table
