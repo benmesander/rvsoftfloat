@@ -20,8 +20,6 @@ _start:
 	la	a1, mzero
 	li	a2, 2
 	li	a3, SP_MINUS_ZERO
-#	lui	a3, %hi(SP_MINUS_ZERO)		# this sign extends
-#	addi	a3, a3, %lo(SP_MINUS_ZERO)	# wtf
 	jal	atof_test
 
 	li	a0, 3
@@ -107,8 +105,8 @@ atof_test:
 
 	mv	t0, a0
 	li	t1, STATUS_SUCCESS
-	bne	a1, t1, atof_test_fail
 	sub	a0, t0, s3
+	bne	a1, t1, atof_test_fail
 	bnez	a0, atof_test_fail
 
 
@@ -138,6 +136,8 @@ atof_test_return:
 	EFRAME	5
 	ret
 
+# s3 is expected value
+# t0 is calculated value
 atof_test_fail:
 	# Print "fail: expected X got Y"
 	la	a1, fail_prefix
@@ -147,6 +147,12 @@ atof_test_fail:
 	li	a1, 4
 	li	a2, 1
 	jal	to_hex
+	mv	a2, a1
+	mv	a1, a0
+	jal	print
+
+#	li	a0, 
+
 	# After printing the error details
 	la	a1, newline
 	li	a2, 1
