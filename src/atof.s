@@ -179,9 +179,41 @@ atof_search_table:
 	mv	a0, a1
 	li	a1, STATUS_SUCCESS
 	j	atof_return
+
 atof_table_notfound:	
+	# a2 - mantissa accumulator
+	# a3 - sign of mantissa
+	# a4 - scratch
+	# a5 - dotindex
+	# a6 - scratch
+	li	a4, -1
+	li	a3, 0
+	lbu	a4, 0(a0)
+	li	a6, '-'
+
+	bne	a4, a6, atof_mantissa
+	li	a3, 1
+	addi	a0, a0, 1
+	addi	a1, a1, -1	# xxx
+
+atof_mantissa:	
+	lbu	a4, 0(a0)
+	li	a6, '.'
+	bne	a4, a6, atof_notdot
+	li	a6, -1
+	bne	a5, a6, atof_dot
+	li	a1, STATUS_MALFORMED
+	j	atof_return
+atof_dot:
+	# XXX how to keep track of index. maybe shouldn't decrement len?
+atof_notdot:	
+
 
 	# XXX: impl
+
+
+
+
 atof_return:
 	POP	ra, 0
 	POP	s0, 1
